@@ -15,13 +15,14 @@ jobs:
 
       - name: Fetch image
         run: |
-          mkdir -p images
+          mkdir -p images docs
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
+          cp images/Ox.png docs/Ox.png
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add images/Ox.png
+          git add images/Ox.png docs/Ox.png
           git commit -m "Auto update Ox.png" || echo "No changes to commit"
           git push
