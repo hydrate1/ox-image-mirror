@@ -2,7 +2,7 @@ name: Fetch Ox Image
 
 on:
   schedule:
-    - cron: '31 * * * *'  # 毎時31分（UTC）
+    - cron: '30 * * * *'  # 毎時30分（UTC）
   workflow_dispatch:
 
 jobs:
@@ -15,6 +15,7 @@ jobs:
 
       - name: Fetch image
         run: |
+          mkdir -p images
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
 
       - name: Commit and push
