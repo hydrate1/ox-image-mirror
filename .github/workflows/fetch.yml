@@ -2,7 +2,7 @@ name: Fetch Ox Image
 
 on:
   schedule:
-    - cron: '30 * * * *'  # 毎時30分（UTC）
+    - cron: '31 * * * *'  # 毎時31分（UTC）
   workflow_dispatch:
 
 jobs:
