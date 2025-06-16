@@ -17,6 +17,7 @@ jobs:
         run: |
           mkdir -p images docs
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
+          curl -s -o images/TEMP.png http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png
           cp images/Ox.png docs/Ox.png
 
       - name: Commit and push
