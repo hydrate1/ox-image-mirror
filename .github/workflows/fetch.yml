@@ -1,8 +1,8 @@
-name: Fetch Ox Image
+name: Alternate Ox and TEMP Images
 
 on:
   schedule:
-    - cron: '31 * * * *'  # 毎時31分（UTC）
+    - cron: '*/5 * * * *'  # 毎5分（UTC）
   workflow_dispatch:
 
 jobs:
@@ -13,17 +13,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Fetch image
+      - name: Fetch images
         run: |
           mkdir -p images docs
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
           curl -s -o images/TEMP.png http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png
-          cp images/Ox.png docs/Ox.png
+
+          # 現在時刻の「分」を取得（0〜59）
+          MINUTE=$(date -u +"%M")
+          echo "Current UTC minute: $MINUTE"
+
+          # 偶数分ならOx.pngを、奇数分ならTEMP.pngをdocs/Ox.pngにコピー
+          if [ $((10#$MINUTE % 2)) -eq 0 ]; then
+            cp images/Ox.png docs/Ox.png
+            echo "▶ Copied Ox.png"
+          else
+            cp images/TEMP.png docs/Ox.png
+            echo "▶ Copied TEMP.png"
+          fi
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add images/Ox.png docs/Ox.png
-          git commit -m "Auto update Ox.png" || echo "No changes to commit"
+          git add images/Ox.png images/TEMP.png docs/Ox.png
+          git commit -m "Auto update alternating Ox/TEMP" || echo "No changes to commit"
           git push
