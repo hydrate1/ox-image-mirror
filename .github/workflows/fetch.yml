@@ -13,29 +13,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Fetch images
+      - name: Fetch images and alternate
         run: |
           mkdir -p images docs
+          echo "📥 Downloading Ox.png and TEMP.png"
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
           curl -s -o images/TEMP.png http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png
 
-          # 現在時刻の「分」を取得（0〜59）
-          MINUTE=$(date -u +"%M")
-          echo "Current UTC minute: $MINUTE"
+          # Static copies
+          cp images/Ox.png docs/Ox_static.png
+          cp images/TEMP.png docs/TEMP.png
 
-          # 偶数分ならOx.pngを、奇数分ならTEMP.pngをdocs/Ox.pngにコピー
+          # Determine UTC minute
+          MINUTE=$(date -u +"%M")
+          echo "🕒 Current UTC minute: $MINUTE"
+
+          # Alternate display file
           if [ $((10#$MINUTE % 2)) -eq 0 ]; then
             cp images/Ox.png docs/Ox.png
-            echo "▶ Copied Ox.png"
+            echo "▶ Copied Ox.png to docs/Ox.png"
           else
             cp images/TEMP.png docs/Ox.png
-            echo "▶ Copied TEMP.png"
+            echo "▶ Copied TEMP.png to docs/Ox.png"
           fi
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add images/Ox.png images/TEMP.png docs/Ox.png
-          git commit -m "Auto update alternating Ox/TEMP" || echo "No changes to commit"
+          git add images/Ox.png images/TEMP.png docs/Ox_static.png docs/TEMP.png docs/Ox.png
+          git commit -m "🔄 Auto update alternating Ox and TEMP" || echo "No changes to commit"
           git push
