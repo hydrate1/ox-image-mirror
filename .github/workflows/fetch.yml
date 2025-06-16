@@ -1,42 +1,28 @@
-name: Alternate Ox and TEMP Images
+name: Fetch Ox Image
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # 15分おき
+    - cron: '*/15 * * * *'  # 毎15分
   workflow_dispatch:
-
-concurrency:
-  group: "update-ox"   # グループ名を指定して古いものは自動キャンセル
-  cancel-in-progress: true
 
 jobs:
   update-ox:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Fetch images
+      - name: Fetch Ox.png
         run: |
           mkdir -p images docs
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
-          curl -s -o images/TEMP.png http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png
-
-          MINUTE=$(date -u +"%M")
-          echo "Current UTC minute: $MINUTE"
-
-          if [ $((10#$MINUTE % 2)) -eq 0 ]; then
-            cp images/Ox.png docs/Ox.png
-            echo "▶ Copied Ox.png"
-          else
-            cp images/TEMP.png docs/Ox.png
-            echo "▶ Copied TEMP.png"
-          fi
+          cp images/Ox.png docs/Ox.png
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add images/Ox.png images/TEMP.png docs/Ox.png
-          git commit -m "Auto update alternating Ox/TEMP" || echo "No changes to commit"
+          git add images/Ox.png docs/Ox.png
+          git commit -m "Auto update Ox.png" || echo "No changes to commit"
           git push
