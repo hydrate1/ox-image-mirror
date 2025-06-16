@@ -2,7 +2,7 @@ name: Fetch Ox Image
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # 毎15分
+    - cron: '*/15 * * * *'  # 15分ごと（UTC）
   workflow_dispatch:
 
 jobs:
@@ -13,16 +13,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Fetch Ox.png
+      - name: Fetch and overwrite Ox.png
         run: |
           mkdir -p images docs
+
+          # オキシダント画像を取得
           curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
-          cp images/Ox.png docs/Ox.png
+
+          # docsフォルダに強制コピー
+          cp -f images/Ox.png docs/Ox.png
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add images/Ox.png docs/Ox.png
-          git commit -m "Auto update Ox.png" || echo "No changes to commit"
+
+          # 強制的に追加（内容が同じでも）
+          git add -f images/Ox.png docs/Ox.png
+
+          git commit -m "Force update Ox.png" || echo "No changes to commit"
           git push
