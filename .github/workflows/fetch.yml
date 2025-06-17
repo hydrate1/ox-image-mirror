@@ -13,23 +13,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Decide which image to fetch
+        id: decide
+        run: |
+          minute=$(date -u +'%M')
+          if [ $((10#$minute % 30)) -eq 0 ]; then
+            echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png" >> $GITHUB_OUTPUT
+          else
+            echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png" >> $GITHUB_OUTPUT
+          fi
+
       - name: Fetch and overwrite Ox.png
         run: |
           mkdir -p images docs
-
-          # オキシダント画像を取得
-          curl -s -o images/Ox.png http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png
-
-          # docsフォルダに強制コピー
+          curl -s -o images/Ox.png "${{ steps.decide.outputs.url }}"
           cp -f images/Ox.png docs/Ox.png
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-
-          # 強制的に追加（内容が同じでも）
           git add -f images/Ox.png docs/Ox.png
-
           git commit -m "Force update Ox.png" || echo "No changes to commit"
           git push
