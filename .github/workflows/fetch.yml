@@ -16,8 +16,9 @@ jobs:
       - name: Decide which image to fetch
         id: decide
         run: |
+          # 15分ごとに交互に切り替え
           minute=$(date -u +'%M')
-          if [ $((10#$minute % 30)) -eq 0 ]; then
+          if [ $(( (10#$minute / 15) % 2 )) -eq 0 ]; then
             echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png" >> $GITHUB_OUTPUT
           else
             echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png" >> $GITHUB_OUTPUT
