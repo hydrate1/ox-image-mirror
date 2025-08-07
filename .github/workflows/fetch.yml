@@ -21,7 +21,7 @@ jobs:
           if [ $(( (10#$minute / 15) % 2 )) -eq 0 ]; then
             echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/Ox.png" >> $GITHUB_OUTPUT
           else
-            echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/TEMP.png" >> $GITHUB_OUTPUT
+            echo "url=http://andersan.riis.okayama-u.ac.jp:8082/images/Temp.png" >> $GITHUB_OUTPUT
           fi
 
       - name: Fetch and overwrite Ox.png
